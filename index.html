@@ -1,0 +1,413 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BIRTHDAY WISH</title>
+  <!-- Tambahkan Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: black;
+      color: pink;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 1.5rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin-bottom: 40px;
+      min-height: 3rem;
+      transition: opacity 0.5s ease;
+      letter-spacing: 2px;
+      word-spacing: 8px;
+    }
+    .intro {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    .buttons {
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .buttons.visible {
+      opacity: 1;
+    }
+    .btn {
+      padding: 12px 24px;
+      background: pink;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: black;
+      font-weight: bold;
+      transition: transform 0.3s;
+    }
+    .btn#stop:hover, .btn#stop:focus {
+      position: absolute;
+      left: calc(50% + (Math.random() * 100 - 50)px);
+      top: calc(50% + (Math.random() * 100 - 50)px);
+    }
+    .floating-decor {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .float {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      animation: float 10s linear infinite;
+      opacity: 0.7;
+    }
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+      }
+    }
+    #mute-toggle {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: pink;
+      cursor: pointer;
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+        line-height: 1.6;
+        white-space: pre-line;
+        margin-bottom: 40px;
+        min-height: 3rem;
+        transition: opacity 0.5s ease;
+        letter-spacing: 2px;
+      word-spacing: 8px;
+      }
+      .intro {
+        font-size: 1.8rem;
+      }
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
+  
+    
+    #envelope-container {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .envelope {
+      position: relative;
+      width: 320px;
+      height: 220px;
+      background: #fefefe;
+      border: 2px solid pink;
+      box-shadow: 0 0 15px pink;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      perspective: 800px;
+      border-radius: 4px;
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 160px solid transparent;
+      border-right: 160px solid transparent;
+      border-bottom: 100px solid pink;
+      transform-origin: top;
+      animation: flapOpen 1s forwards;
+      z-index: 2;
+    }
+
+    .letter {
+      position: absolute;
+      top: 100px;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: white;
+      padding: 20px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .letter p {
+      color: black;
+      margin-bottom: 10px;
+    }
+
+    #blackscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      z-index: 999;
+    }
+
+    @keyframes flapOpen {
+      0% {
+        transform: rotateX(0deg);
+      }
+      100% {
+        transform: rotateX(-120deg);
+      }
+    }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <button id="mute-toggle">🔊</button>
+  <div id="content">
+    <div class="intro" id="intro">THIS IS REPRESENT FOR YOU</div>
+    <h1 id="message" style="display: none;"></h1>
+    <div class="buttons" id="buttons">
+      <button class="btn" id="next">NEXT</button>
+      <button class="btn" id="stop">STOP</button>
+    </div>
+  </div>
+  <div class="floating-decor" id="decor"></div>
+  <audio id="bgm" preload="auto" loop>
+    <source src="expres.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+  
+  <div id="envelope-container" style="display: none;">
+    <div class="envelope">
+      <div class="flap"></div>
+      <div class="letter">
+        <p>This is a letter for you 🎁</p>
+        <button class="btn" id="open-letter">OPEN IT</button>
+        <button class="btn" id="throw-letter">THROW IT</button>
+      </div>
+    </div>
+  </div>
+  <div id="blackscreen" style="display: none;"></div>
+
+  <script>
+    const messages = [
+      "HAPPY BIRTHDAY JASMINE NABILA.",
+      "WHAT I WISH IS ALWAYS",
+      "THE BEST FOR YOU",
+      "I KNOW YOU'VE STRUGGLED THIS YEAR",
+      "BUT",
+      "I ALSO KNOW YOU'RE A STRONG GIRL",
+      "I HOPE EVERYTHING BEST COMES TO YOU",
+      "I WISH",
+      "YOUR DREAMS",
+      "CAREER",
+      "STUDY",
+      "RELATIONSHIP",
+      "WILL BE PROVEN BY WHAT YOU DESERVE",
+      "I'M SORRY IF I REPEAT THE SAME MISTAKES",
+      "OUR RELATIONSHIP IS JUST LIKE A SEASON",
+      "BUT I DIDN'T EXPECT IT TO PASS SO FAST",
+      "AND",
+      "I JUST WANT TO TELL YOU",
+      "I KNOW HOW WORST",
+      "I AM, FOR YOU",
+      "NO MATTER HOW MUCH I FEEL THE PAIN",
+      "I WILL STILL STAND WHILE I CAN STAND",
+      "I HOPE I'M NOT THE WORST CHAPTER",
+      "OF YOUR JOURNEY",
+      "BUT",
+      "IF THAT'S TRUE",
+      "I'M SORRY",
+      "BUT YOU",
+      "ARE THE",
+      "BEST CHAPTER",
+      "OF MY STORY",
+      "AT LEAST",
+      "FOR NOW",
+      "JASMINE",
+      "IT WILL END",
+      "WHEN IT'S DONE",
+      "MAYBE THIS IS",
+      "MY LAST BIRTHDAY WISH FOR YOU",
+      "DON'T WORRY",
+      "WE WILL GET USED TO IT",
+      "THANK YOU FOR EVERYTHING YOU'VE DONE",
+      "END"
+    ];
+
+    const nextBtn = document.getElementById("next");
+    const stopBtn = document.getElementById("stop");
+    const messageBox = document.getElementById("message");
+    const decorContainer = document.getElementById("decor");
+    const audio = document.getElementById("bgm");
+    const intro = document.getElementById("intro");
+    const buttons = document.getElementById("buttons");
+    const muteToggle = document.getElementById("mute-toggle");
+
+    let index = 0;
+    let started = false;
+    let audioStarted = false;
+    let typingInterval = null;
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        buttons.classList.add("visible");
+      }, 500);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (!started) {
+        started = true;
+        intro.style.display = "none";
+        buttons.style.display = "none";
+        document.getElementById("envelope-container").style.display = "flex";
+        return;
+      }
+
+      if (!audioStarted) {
+        audio.play().catch(e => console.log("Audio play blocked: ", e));
+        audioStarted = true;
+      }
+
+      if (index < messages.length) {
+        typeMessage(messages[index]);
+        index++;
+      }
+    });
+
+    stopBtn.addEventListener("mouseenter", moveStopButton);
+    stopBtn.addEventListener("touchstart", moveStopButton);
+
+    muteToggle.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+      muteToggle.textContent = audio.muted ? "🔇" : "🔊";
+    });
+
+    function moveStopButton(e) {
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 50);
+      stopBtn.style.position = "absolute";
+      stopBtn.style.left = `${x}px`;
+      stopBtn.style.top = `${y}px`;
+    }
+
+    function generateFloatingDecor() {
+      const symbols = ["🎈", "❤️", "🎉", "💖"];
+      for (let i = 0; i < 30; i++) {
+        const el = document.createElement("div");
+        el.className = "float";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.animationDuration = (5 + Math.random() * 5) + "s";
+        el.style.fontSize = (20 + Math.random() * 20) + "px";
+        el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        decorContainer.appendChild(el);
+      }
+    }
+
+    function typeMessage(text) {
+      clearInterval(typingInterval);
+      messageBox.innerHTML = "";
+      let i = 0;
+      typingInterval = setInterval(() => {
+        messageBox.innerHTML += text.charAt(i);
+        i++;
+        if (i >= text.length) { clearInterval(typingInterval); 
+if (text === "END") {
+  const runningLink = document.createElement("a");
+  runningLink.href = "https://antrogis.github.io/Project-Foto/";
+  runningLink.textContent = "KLIK HERE TO SEE LIL BIT MEMORIES";
+  Object.assign(runningLink.style, {
+    position: "absolute",
+    bottom: "50px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "pink",
+    color: "black",
+    padding: "10px 20px",
+    borderRadius: "6px",
+    textDecoration: "none",
+    fontWeight: "bold",
+    zIndex: "1000",
+    cursor: "pointer"
+  });
+
+  let attempts = 0;
+  const maxAttempts = 3;
+  function evade(e) {
+    if (attempts < maxAttempts) {
+      const randX = Math.random() * (window.innerWidth - 200);
+      const randY = Math.random() * (window.innerHeight - 100);
+      runningLink.style.left = randX + "px";
+      runningLink.style.top = randY + "px";
+      runningLink.style.transform = "none";
+      attempts++;
+    } else {
+      runningLink.removeEventListener("mouseenter", evade);
+    }
+  }
+  runningLink.addEventListener("mouseenter", evade);
+  document.body.appendChild(runningLink);
+}
+ }
+      }, 40);
+    }
+  
+    document.getElementById("open-letter").addEventListener("click", () => {
+      document.getElementById("envelope-container").style.display = "none";
+      messageBox.style.display = "block";
+      buttons.style.display = "flex";
+      buttons.classList.add("visible");
+      generateFloatingDecor();
+      audio.play().catch(e => console.log("Audio play blocked: ", e));
+      audioStarted = true;
+      typeMessage(messages[index]);
+      index++;
+    });
+
+    document.getElementById("throw-letter").addEventListener("click", () => {
+      document.getElementById("envelope-container").style.display = "none";
+      document.getElementById("blackscreen").style.display = "block";
+    });
+
+  </script>
+</body>
+</html>
